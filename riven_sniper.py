@@ -186,8 +186,8 @@ def update_listings_with_new():
 
     # Scrape warframe.market
     print("Scraping warframe.market...")
-    wf_listings = scrape_warframe_market()
-    for listing in wf_listings:
+    wm_listings = scrape_warframe_market()
+    for listing in wm_listings:
         if listing["id"] not in existing_ids:
             cursor.execute(
                 """
@@ -472,20 +472,6 @@ def build_godrolls():
     weapons = cursor.fetchone()[0]
 
     print(f"Godrolls created: {total} top rolls across {weapons} weapons")
-
-    # Show top 5 most expensive
-    cursor.execute("""
-        SELECT weapon, stat1, stat2, stat3, stat4, median_price, sample_count
-        FROM godrolls
-        ORDER BY median_price DESC
-        LIMIT 5
-        """)
-
-    print("\nTop 5 most expensive godrolls:")
-    for row in cursor.fetchall():
-        weapon, s1, s2, s3, s4, price, count = row
-        stats = [s for s in [s1, s2, s3, s4] if s]
-        print(f"  {weapon}: {', '.join(stats)} - {price}p ({count} samples)")
 
     conn.close()
     return len(godrolls)
