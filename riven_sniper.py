@@ -430,10 +430,10 @@ def build_godrolls():
 
     profiles_with_percentiles = []
     for weapon, weapon_rolls in weapon_profiles.items():
-        sample_counts = [p[5] for p in weapon_rolls]
+        sample_counts = [p[6] for p in weapon_rolls]  # p[6] is sample_count
 
         for profile in weapon_rolls:
-            sample_count = profile[5]
+            sample_count = profile[6]
             rank = sorted(sample_counts).index(sample_count)
             percentile = (rank / len(sample_counts)) * 100
             profiles_with_percentiles.append(profile + (percentile,))
@@ -458,7 +458,7 @@ def build_godrolls():
     cursor.executemany(
         """
         INSERT INTO godrolls VALUES (?,?,?,?,?,?,?,?)
-    """,
+        """,
         [(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]) for p in godrolls],
     )
 
@@ -479,7 +479,7 @@ def build_godrolls():
         FROM godrolls
         ORDER BY median_price DESC
         LIMIT 5
-    """)
+        """)
 
     print("\nTop 5 most expensive godrolls:")
     for row in cursor.fetchall():
