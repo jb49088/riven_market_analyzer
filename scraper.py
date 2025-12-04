@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from poller import (
     fetch_riven_market_page,
@@ -6,6 +7,14 @@ from poller import (
     get_riven_market_url,
     init_database,
     parse_riven_market_rivens,
+)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+    ],
 )
 
 
@@ -54,27 +63,24 @@ def insert_batch(cursor, conn, rivens):
 
 def display_stats(start_time, total_scraped, db_path):
     """Display runtime statistics."""
-
     end_time = datetime.datetime.now()
     duration = end_time - start_time
 
-    print("\nScrape complete!")
-    print(f"Total rivens scraped: {total_scraped}")
-    print(f"Duration: {duration}")
-    print(f"Listings table saved to: {db_path}")
+    logging.info("Scrape complete!")
+    logging.info(f"Total rivens scraped: {total_scraped}")
+    logging.info(f"Duration: {duration}")
+    logging.info(f"Listings table saved to: {db_path}")
 
 
 def main():
     """One-time full scrape of riven.market for historical data."""
-
     url = get_riven_market_url()
     params = get_riven_market_params()
-
     db_path, conn, cursor = init_database("market.db")
 
-    print("Fetching total count...")
+    logging.info("Fetching total count...")
     total_rivens, total_pages = get_total_count(url, params)
-    print(f"Found {total_rivens} rivens total ({total_pages} pages)")
+    logging.info(f"Found {total_rivens} rivens total ({total_pages} pages)")
 
     page = 1
     total_scraped = 0
@@ -83,29 +89,25 @@ def main():
     while page <= total_pages:
         try:
             params["page"] = page
-
             soup = fetch_riven_market_page(url, params)
-
             rivens = parse_riven_market_rivens(soup)
 
             if rivens:
                 insert_batch(cursor, conn, rivens)
-
                 total_scraped += len(rivens)
-                print(
+                logging.info(
                     f"Page {page}/{total_pages}: {len(rivens)} rivens (Total: {total_scraped})"
                 )
             else:
-                print(f"Page {page}/{total_pages}: No rivens found")
+                logging.info(f"Page {page}/{total_pages}: No rivens found")
 
             page += 1
 
         except Exception as e:
-            print(f"Error on page {page}: {e}")
+            logging.error(f"Error on page {page}: {e}")
             break
 
     conn.close()
-
     display_stats(start_time, total_scraped, db_path)
 
 
@@ -113,4 +115,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("Scraper interrupted")
+        logging.info("Scraper interrupted")

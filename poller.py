@@ -126,7 +126,8 @@ def insert_listing(listing, existing_ids, cursor):
     if listing["id"] not in existing_ids:
         cursor.execute(
             """
-            INSERT OR REPLACE INTO listings VALUES (?,?,?,?,?,?,?,?,?,?)
+            INSERT OR REPLACE INTO listings
+            VALUES (?,?,?,?,?,?,?,?,?,?)
             """,
             (
                 listing["id"],
