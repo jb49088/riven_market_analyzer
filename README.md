@@ -8,10 +8,10 @@
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                           2             77             94            306
-Markdown                         1              7              4             20
+Python                           3             78             94            310
+Markdown                         1              7              4             21
 -------------------------------------------------------------------------------
-SUM:                             3             84             98            326
+SUM:                             4             85             98            331
 -------------------------------------------------------------------------------
 ```
 <!-- CODE_STATISTICS_END -->
@@ -25,8 +25,9 @@ riven_sniper
 ├── aggregator.py
 ├── market.db
 ├── README.md
-└── riven_sniper.py
+├── riven_sniper.py
+└── scraper.py
 
-1 directory, 4 files
+1 directory, 5 files
 ```
 <!-- PROJECT_STRUCTURE_END -->
