@@ -4,7 +4,7 @@ import sqlite3
 import bs4
 import requests
 
-LISTINGS_SCHEMA = """
+listings_schema = """
 CREATE TABLE listings (
     id TEXT PRIMARY KEY,
     seller TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE listings (
 
 
 def scrape_riven_market():
-    """Scrape first page of riven.market and return normalized data for BASE_SCHEMA"""
+    """Scrape first page of riven.market and return normalized data"""
 
     url = "https://riven.market/_modules/riven/showrivens.php"
 
@@ -143,12 +143,13 @@ def scrape_warframe_market():
 
 def update_listings_with_new():
     """Scrape both sites and append only new listings to database"""
+
     conn = sqlite3.connect("market.db")
     cursor = conn.cursor()
 
     # Ensure table exists
     cursor.execute(
-        LISTINGS_SCHEMA.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
+        listings_schema.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
     )
 
     # Get existing IDs for quick lookup
