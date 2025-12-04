@@ -59,12 +59,10 @@ def build_godrolls():
         profiles[key].append(price)
 
     # Calculate median and count for each profile
-    aggregated = []
-    for key, prices in profiles.items():
-        weapon, s1, s2, s3, s4 = key
-        aggregated.append(
-            (weapon, s1, s2, s3, s4, statistics.median(prices), len(prices))
-        )
+    aggregated = [
+        (*key, statistics.median(prices), len(prices))
+        for key, prices in profiles.items()
+    ]
 
     # Calculate percentiles per weapon
     weapon_profiles = defaultdict(list)
