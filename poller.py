@@ -15,6 +15,31 @@ logging.basicConfig(
 )
 
 
+def init_database(database):
+    """Setup the database with a single listings table."""
+
+    db_path = database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS listings (
+            id TEXT PRIMARY KEY,
+            seller TEXT NOT NULL,
+            source TEXT NOT NULL,
+            weapon TEXT NOT NULL,
+            stat1 TEXT,
+            stat2 TEXT,
+            stat3 TEXT,
+            stat4 TEXT,
+            price INTEGER NOT NULL,
+            scraped_at TIMESTAMP
+        )
+    """)
+
+    return db_path, conn, cursor
+
+
 def get_riven_market_url():
     """Return the riven.market API URL."""
     return "https://riven.market/_modules/riven/showrivens.php"
@@ -85,31 +110,6 @@ def parse_riven_market_rivens(soup):
     return rivens
 
 
-def init_database(database):
-    """Setup the database with a single listings table."""
-
-    db_path = database
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS listings (
-            id TEXT PRIMARY KEY,
-            seller TEXT NOT NULL,
-            source TEXT NOT NULL,
-            weapon TEXT NOT NULL,
-            stat1 TEXT,
-            stat2 TEXT,
-            stat3 TEXT,
-            stat4 TEXT,
-            price INTEGER NOT NULL,
-            scraped_at TIMESTAMP
-        )
-    """)
-
-    return db_path, conn, cursor
-
-
 def poll_riven_market():
     """Poll first page of riven.market and return normalized data."""
 
@@ -120,6 +120,28 @@ def poll_riven_market():
     rivens = parse_riven_market_rivens(soup)
 
     return rivens
+
+
+def insert_listing(listing, existing_ids, cursor):
+    if listing["id"] not in existing_ids:
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO listings VALUES (?,?,?,?,?,?,?,?,?,?)
+            """,
+            (
+                listing["id"],
+                listing["seller"],
+                listing["source"],
+                listing["weapon"],
+                listing["stat1"],
+                listing["stat2"],
+                listing["stat3"],
+                listing["stat4"],
+                listing["price"],
+                listing["scraped_at"],
+            ),
+        )
+        existing_ids.add(listing["id"])
 
 
 def get_warframe_market_url():
@@ -146,6 +168,15 @@ def fetch_warframe_market_auctions():
     data = r.json()
 
     return data.get("payload", {}).get("auctions", [])
+
+
+def poll_warframe_market():
+    """Poll recent riven listings from warframe.market API and return normalized data."""
+
+    auctions = fetch_warframe_market_auctions()
+    rivens = parse_warframe_market_rivens(auctions)
+
+    return rivens
 
 
 def parse_warframe_market_rivens(auctions):
@@ -187,37 +218,6 @@ def parse_warframe_market_rivens(auctions):
         rivens.append(riven)
 
     return rivens
-
-
-def poll_warframe_market():
-    """Poll recent riven listings from warframe.market API and return normalized data."""
-
-    auctions = fetch_warframe_market_auctions()
-    rivens = parse_warframe_market_rivens(auctions)
-
-    return rivens
-
-
-def insert_listing(listing, existing_ids, cursor):
-    if listing["id"] not in existing_ids:
-        cursor.execute(
-            """
-            INSERT OR REPLACE INTO listings VALUES (?,?,?,?,?,?,?,?,?,?)
-            """,
-            (
-                listing["id"],
-                listing["seller"],
-                listing["source"],
-                listing["weapon"],
-                listing["stat1"],
-                listing["stat2"],
-                listing["stat3"],
-                listing["stat4"],
-                listing["price"],
-                listing["scraped_at"],
-            ),
-        )
-        existing_ids.add(listing["id"])
 
 
 def main():
