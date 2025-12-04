@@ -45,18 +45,13 @@ def scrape_warframe_market():
 
     params = {
         "type": "riven",
-        "sort": "created_desc",  # Newest first
-    }
-
-    headers = {
-        "platform": "pc",
-        "language": "en",
+        "sort": "created_desc",
     }
 
     # Fetch data
-    response = requests.get(url, params=params, headers=headers)
-    response.raise_for_status()
-    data = response.json()
+    r = requests.get(url, params=params)
+    r.raise_for_status()
+    data = r.json()
 
     auctions = data.get("payload", {}).get("auctions", [])
 
@@ -80,12 +75,9 @@ def scrape_warframe_market():
             else:
                 negative = attr.get("url_name", "")
 
-        # Sort positives
-        positives = positives[:3]  # Take up to 3 positives
-
         # Create normalized entry
         riven = {
-            "id": f"wf_{auction['id']}",
+            "id": f"wm_{auction['id']}",
             "seller": auction.get("owner", {}).get("ingame_name", ""),
             "source": "warframe.market",
             "weapon": item.get("weapon_url_name", ""),
