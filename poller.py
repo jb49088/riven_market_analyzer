@@ -250,7 +250,7 @@ def main():
     conn.close()
 
     new_count = len(existing_ids) - initial_count
-    logging.info(f"Added {new_count} new listings")
+    logging.info(f"Added {new_count} new listings to {db_path}")
 
 
 if __name__ == "__main__":
