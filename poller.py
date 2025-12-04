@@ -1,10 +1,16 @@
 import datetime
 import sqlite3
 
-import bs4
 import requests
 
-listings_schema = """
+from snapshot import (
+    fetch_page,
+    get_riven_market_params,
+    get_riven_market_url,
+    parse_rivens,
+)
+
+LISTINGS_SCHEMA = """
 CREATE TABLE listings (
     id TEXT PRIMARY KEY,
     seller TEXT NOT NULL,
@@ -23,57 +29,11 @@ CREATE TABLE listings (
 def scrape_riven_market():
     """Scrape first page of riven.market and return normalized data"""
 
-    url = "https://riven.market/_modules/riven/showrivens.php"
+    url = get_riven_market_url()
+    params = get_riven_market_params()
 
-    params = {
-        "platform": "ALL",
-        "limit": 200,
-        "recency": -1,
-        "veiled": "false",
-        "onlinefirst": "false",
-        "polarity": "all",
-        "rank": "all",
-        "mastery": 16,
-        "weapon": "Any",
-        "stats": "Any",
-        "neg": "all",
-        "price": 99999,
-        "rerolls": -1,
-        "sort": "time",
-        "direction": "ASC",
-        "page": 1,
-        "time": int(datetime.datetime.now().timestamp() * 1000),
-    }
-
-    # Fetch page
-    r = requests.get(url, params=params)
-    r.raise_for_status()
-    soup = bs4.BeautifulSoup(r.text, "html.parser")
-
-    # Parse rivens
-    rivens = []
-    for element in soup.select("div.riven"):
-        # Get seller name
-        seller_div = element.select_one("div.attribute.seller")
-        if not seller_div:
-            continue
-
-        seller_name = seller_div.text.strip().split("\n")[0].strip()
-
-        # Create normalized entry
-        riven = {
-            "id": f"rm_{element['id']}",
-            "seller": seller_name,
-            "source": "riven.market",
-            "weapon": element["data-weapon"].lower().replace(" ", "_"),
-            "stat1": element["data-stat1"],
-            "stat2": element["data-stat2"],
-            "stat3": element["data-stat3"],
-            "stat4": element["data-stat4"],
-            "price": int(element["data-price"]),
-            "scraped_at": datetime.datetime.now().isoformat(),
-        }
-        rivens.append(riven)
+    soup = fetch_page(url, params)
+    rivens = parse_rivens(soup)
 
     return rivens
 
@@ -149,7 +109,7 @@ def update_listings_with_new():
 
     # Ensure table exists
     cursor.execute(
-        listings_schema.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
+        LISTINGS_SCHEMA.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
     )
 
     # Get existing IDs for quick lookup
