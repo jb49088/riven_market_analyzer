@@ -64,6 +64,8 @@ def fetch_page(url, params):
 
 
 def get_total_count(url, params):
+    """Extract total riven and page count."""
+
     soup = fetch_page(url, params)
 
     pagination_div = soup.select_one("div.pagination")
@@ -109,6 +111,8 @@ def parse_rivens(soup):
 
 
 def insert_batch(cursor, conn, rivens):
+    """Insert a batch of listings into the database."""
+
     cursor.executemany(
         """
         INSERT OR REPLACE INTO listings
@@ -134,6 +138,8 @@ def insert_batch(cursor, conn, rivens):
 
 
 def display_stats(start_time, total_scraped, db_path):
+    """Display runtime statistics."""
+
     end_time = datetime.datetime.now()
     duration = end_time - start_time
 
@@ -144,7 +150,7 @@ def display_stats(start_time, total_scraped, db_path):
 
 
 def main(url, params):
-    """One-time full scrape of riven.market for historical data"""
+    """One-time full scrape of riven.market for historical data."""
 
     db_path, conn, cursor = init_database("market.db")
 
