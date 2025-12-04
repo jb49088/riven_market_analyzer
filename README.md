@@ -27,7 +27,7 @@ riven_sniper
 ├── market.db
 ├── poller.py
 ├── README.md
-└── snapshot.py
+└── scraper.py
 
 2 directories, 5 files
 ```
