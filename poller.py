@@ -1,5 +1,4 @@
 import datetime
-import sqlite3
 
 import requests
 
@@ -7,23 +6,9 @@ from snapshot import (
     fetch_page,
     get_riven_market_params,
     get_riven_market_url,
+    init_database,
     parse_rivens,
 )
-
-LISTINGS_SCHEMA = """
-CREATE TABLE listings (
-    id TEXT PRIMARY KEY,
-    seller TEXT NOT NULL,
-    source TEXT NOT NULL,
-    weapon TEXT NOT NULL,
-    stat1 TEXT,
-    stat2 TEXT,
-    stat3 TEXT,
-    stat4 TEXT,
-    price INTEGER NOT NULL,
-    scraped_at TIMESTAMP
-)
-"""
 
 
 def scrape_riven_market():
@@ -94,15 +79,9 @@ def scrape_warframe_market():
 
 
 def update_listings_with_new():
-    """Scrape both sites and append only new listings to database"""
+    """Scrape both sites and append only new listings to listings."""
 
-    conn = sqlite3.connect("market.db")
-    cursor = conn.cursor()
-
-    # Ensure table exists
-    cursor.execute(
-        LISTINGS_SCHEMA.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS")
-    )
+    db_path, conn, cursor = init_database("market.db")
 
     # Get existing IDs for quick lookup
     cursor.execute("SELECT id FROM listings")
