@@ -4,27 +4,33 @@ import sqlite3
 import bs4
 import requests
 
-url = "https://riven.market/_modules/riven/showrivens.php"
 
-params = {
-    "platform": "ALL",
-    "limit": 200,
-    "recency": -1,
-    "veiled": "false",
-    "onlinefirst": "false",
-    "polarity": "all",
-    "rank": "all",
-    "mastery": 16,
-    "weapon": "Any",
-    "stats": "Any",
-    "neg": "all",
-    "price": 99999,
-    "rerolls": -1,
-    "sort": "time",
-    "direction": "ASC",
-    "page": 1,
-    "time": int(datetime.datetime.now().timestamp() * 1000),
-}
+def get_riven_market_url():
+    """Return the riven.market API URL."""
+    return "https://riven.market/_modules/riven/showrivens.php"
+
+
+def get_riven_market_params():
+    """Return default scraping parameters for riven.market API."""
+    return {
+        "platform": "ALL",
+        "limit": 200,
+        "recency": -1,
+        "veiled": "false",
+        "onlinefirst": "false",
+        "polarity": "all",
+        "rank": "all",
+        "mastery": 16,
+        "weapon": "Any",
+        "stats": "Any",
+        "neg": "all",
+        "price": 99999,
+        "rerolls": -1,
+        "sort": "time",
+        "direction": "ASC",
+        "page": 1,
+        "time": int(datetime.datetime.now().timestamp() * 1000),
+    }
 
 
 def init_database(database):
@@ -149,8 +155,11 @@ def display_stats(start_time, total_scraped, db_path):
     print(f"Listings table saved to: {db_path}")
 
 
-def main(url, params):
+def main():
     """One-time full scrape of riven.market for historical data."""
+
+    url = get_riven_market_url()
+    params = get_riven_market_params()
 
     db_path, conn, cursor = init_database("market.db")
 
@@ -193,6 +202,6 @@ def main(url, params):
 
 if __name__ == "__main__":
     try:
-        main(url, params)
+        main()
     except KeyboardInterrupt:
         print("Scraper interrupted")
