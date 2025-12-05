@@ -42,6 +42,13 @@ def init_database(database):
     return db_path, conn, cursor
 
 
+def get_headers():
+    """Return Firefox browser headers."""
+    return {
+        "Mozilla/5.0": "(Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
+    }
+
+
 def get_riven_market_url():
     """Return the riven.market API URL."""
     return "https://riven.market/_modules/riven/showrivens.php"
@@ -70,13 +77,13 @@ def get_riven_market_params():
     }
 
 
-def fetch_riven_market_page(url, params):
+def fetch_riven_market_page(url, params, headers):
     """Fetch and parse a page."""
 
     # Update time for cache busting
     params["time"] = int(datetime.datetime.now().timestamp() * 1000)
 
-    r = requests.get(url, params=params)
+    r = requests.get(url, params=params, headers=headers)
     r.raise_for_status()
     return bs4.BeautifulSoup(r.text, "html.parser")
 
@@ -117,8 +124,9 @@ def poll_riven_market():
 
     url = get_riven_market_url()
     params = get_riven_market_params()
+    headers = get_headers()
 
-    soup = fetch_riven_market_page(url, params)
+    soup = fetch_riven_market_page(url, params, headers)
     rivens = parse_riven_market_rivens(soup)
 
     return rivens
@@ -165,8 +173,9 @@ def fetch_warframe_market_auctions():
 
     url = get_warframe_market_url()
     params = get_warframe_market_params()
+    headers = get_headers()
 
-    r = requests.get(url, params=params)
+    r = requests.get(url, params=params, headers=headers)
     r.raise_for_status()
     data = r.json()
 

@@ -3,6 +3,7 @@ import logging
 
 from poller import (
     fetch_riven_market_page,
+    get_headers,
     get_riven_market_params,
     get_riven_market_url,
     init_database,
@@ -18,10 +19,10 @@ logging.basicConfig(
 )
 
 
-def get_total_count(url, params):
+def get_total_count(url, params, headers):
     """Extract total riven and page count."""
 
-    soup = fetch_riven_market_page(url, params)
+    soup = fetch_riven_market_page(url, params, headers)
 
     pagination_div = soup.select_one("div.pagination")
 
@@ -76,10 +77,11 @@ def scraper():
     """One-time full scrape of riven.market for historical data."""
     url = get_riven_market_url()
     params = get_riven_market_params()
+    headers = get_headers()
     db_path, conn, cursor = init_database("market.db")
 
     logging.info("Fetching total count...")
-    total_rivens, total_pages = get_total_count(url, params)
+    total_rivens, total_pages = get_total_count(url, params, headers)
     logging.info(f"Found {total_rivens} rivens total ({total_pages} pages)")
 
     page = 1
@@ -89,7 +91,7 @@ def scraper():
     while page <= total_pages:
         try:
             params["page"] = page
-            soup = fetch_riven_market_page(url, params)
+            soup = fetch_riven_market_page(url, params, headers)
             rivens = parse_riven_market_rivens(soup)
 
             if rivens:
