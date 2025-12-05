@@ -5,6 +5,8 @@ import time
 
 import requests
 
+from config import DATABASE, DEAL_THRESHOLD
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -29,7 +31,7 @@ def init_alerted_table(database):
     conn.close()
 
 
-def find_deals(database, threshold=0.60):
+def find_deals(database, threshold):
     """Find new listings that are below the median price threshold."""
 
     conn = sqlite3.connect(database)
@@ -164,7 +166,7 @@ def send_discord_webhook(message):
         logging.error(f"Failed to send Discord alert: {e}")
 
 
-def monitor(database="market.db", threshold=0.60):
+def monitor(database=DATABASE, threshold=DEAL_THRESHOLD):
     """Monitor and alert on deals."""
 
     init_alerted_table(database)

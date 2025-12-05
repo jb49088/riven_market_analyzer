@@ -3,6 +3,8 @@ import sqlite3
 import statistics
 from collections import defaultdict
 
+from config import DATABASE, GODROLL_COUNT, MAX_PRICE, SAMPLE_THRESHOLD
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -99,9 +101,9 @@ def calculate_percentiles(weapon_rolls):
 
 
 def get_top_rolls(profiles_with_percentiles):
-    top_rolls = [r for r in profiles_with_percentiles if r[7] >= 80]
+    top_rolls = [r for r in profiles_with_percentiles if r[7] >= SAMPLE_THRESHOLD]
     top_rolls.sort(key=lambda x: x[5], reverse=True)  # x[5] is median_price
-    return top_rolls[:5]
+    return top_rolls[:GODROLL_COUNT]
 
 
 def display_stats(cursor):
@@ -116,14 +118,15 @@ def display_stats(cursor):
 def aggregator():
     """Aggregate listings into godrolls table."""
 
-    conn, cursor = init_database("market.db")
+    conn, cursor = init_database(DATABASE)
 
     cursor.execute(
         """
         SELECT weapon, stat1, stat2, stat3, stat4, price
         FROM listings
-        WHERE price > 0 AND price < 50000
-        """
+        WHERE price > 0 AND price < ?
+        """,
+        (MAX_PRICE,),
     )
 
     # Build and aggregate profiles

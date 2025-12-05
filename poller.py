@@ -5,6 +5,8 @@ import sqlite3
 import bs4
 import requests
 
+from config import DATABASE
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -235,7 +237,7 @@ def parse_warframe_market_rivens(auctions):
 def poller():
     """Poll both sites and append only new listings to the listings table."""
 
-    db_path, conn, cursor = init_database("market.db")
+    db_path, conn, cursor = init_database(DATABASE)
 
     # Get existing IDs for quick lookup
     cursor.execute("SELECT id FROM listings")

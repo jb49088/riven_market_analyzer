@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+from config import DATABASE
 from poller import (
     fetch_riven_market_page,
     get_headers,
@@ -78,7 +79,7 @@ def scraper():
     url = get_riven_market_url()
     params = get_riven_market_params()
     headers = get_headers()
-    db_path, conn, cursor = init_database("market.db")
+    db_path, conn, cursor = init_database(DATABASE)
 
     logging.info("Fetching total count...")
     total_rivens, total_pages = get_total_count(url, params, headers)
