@@ -171,7 +171,7 @@ def monitor(database=DATABASE, threshold=DEAL_THRESHOLD):
 
     for deal in deals:
         send_alert(deal)
-        time.sleep(1)
+        time.sleep(2)
 
     logging.info(f"Monitor complete. Found {len(deals)} deals")
     return len(deals)
