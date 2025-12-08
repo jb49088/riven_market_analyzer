@@ -5,15 +5,6 @@ from collections import defaultdict
 
 from config import DATABASE, GODROLL_COUNT, MAX_PRICE, SAMPLE_THRESHOLD
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("logs/aggregator.log"),
-        logging.StreamHandler(),
-    ],
-)
-
 
 def init_database(database):
     """Setup the database with a godrolls table."""

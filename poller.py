@@ -7,15 +7,6 @@ import requests
 
 from config import DATABASE
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("logs/poller.log"),
-        logging.StreamHandler(),
-    ],
-)
-
 
 def init_database(database):
     """Setup the database with a listings table."""

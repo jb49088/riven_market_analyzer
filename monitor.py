@@ -7,15 +7,6 @@ import requests
 
 from config import DATABASE, DEAL_THRESHOLD
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("logs/monitor.log"),
-        logging.StreamHandler(),
-    ],
-)
-
 
 def init_alerted_table(database):
     """Create table to track alerted listings if it doesn't exist."""

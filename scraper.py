@@ -11,14 +11,6 @@ from poller import (
     parse_riven_market_rivens,
 )
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-    ],
-)
-
 
 def get_total_count(url, params, headers):
     """Extract total riven and page count."""
