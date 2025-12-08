@@ -24,16 +24,18 @@ SUM:                             7            188            124            524
 
 ```
 riven_sniper
-├── aggregator.py
-├── config.py
+├── data
+│   └── market.db
 ├── logs
-├── market.db
-├── monitor.py
-├── poller.py
 ├── README.md
-├── riven_sniper.py
-└── scraper.py
+└── src
+    ├── aggregator.py
+    ├── config.py
+    ├── monitor.py
+    ├── poller.py
+    ├── riven_sniper.py
+    └── scraper.py
 
-2 directories, 8 files
+4 directories, 8 files
 ```
 <!-- PROJECT_STRUCTURE_END -->
