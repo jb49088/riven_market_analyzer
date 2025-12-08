@@ -97,6 +97,7 @@ def find_deals(database, threshold):
 
     conn.commit()
     conn.close()
+
     return deals
 
 
@@ -154,7 +155,7 @@ def send_discord_webhook(message):
         return
 
     try:
-        response = requests.post(webhook_url, json={"content": message})
+        response = requests.post(webhook_url, json={"content": message}, timeout=10)
         response.raise_for_status()
         logging.info("Discord alert sent successfully")
     except Exception as e:

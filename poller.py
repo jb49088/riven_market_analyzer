@@ -46,7 +46,7 @@ def init_database(database):
 def get_headers():
     """Return Firefox browser headers."""
     return {
-        "Mozilla/5.0": "(Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
     }
 
 
@@ -83,7 +83,7 @@ def fetch_riven_market_page(url, params, headers):
     # Update time for cache busting
     params["time"] = int(datetime.datetime.now().timestamp() * 1000)
 
-    r = requests.get(url, params=params, headers=headers)
+    r = requests.get(url, params=params, headers=headers, timeout=10)
     r.raise_for_status()
     return bs4.BeautifulSoup(r.text, "html.parser")
 
@@ -172,7 +172,7 @@ def fetch_warframe_market_auctions():
     params = get_warframe_market_params()
     headers = get_headers()
 
-    r = requests.get(url, params=params, headers=headers)
+    r = requests.get(url, params=params, headers=headers, timeout=10)
     r.raise_for_status()
     data = r.json()
 
