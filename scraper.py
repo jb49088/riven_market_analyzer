@@ -22,7 +22,6 @@ logging.basicConfig(
 
 def get_total_count(url, params, headers):
     """Extract total riven and page count."""
-
     soup = fetch_riven_market_page(url, params, headers)
 
     pagination_div = soup.select_one("div.pagination")
@@ -38,7 +37,6 @@ def get_total_count(url, params, headers):
 
 def insert_batch(cursor, conn, rivens):
     """Insert a batch of listings into the database."""
-
     cursor.executemany(
         """
         INSERT OR REPLACE INTO listings
