@@ -19,7 +19,6 @@ logging.basicConfig(
 
 def init_alerted_table(database):
     """Create table to track alerted listings if it doesn't exist."""
-
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
     cursor.execute("""
@@ -33,7 +32,6 @@ def init_alerted_table(database):
 
 def find_deals(database, threshold):
     """Find new listings that are below the median price threshold."""
-
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
     deals = []
@@ -104,7 +102,6 @@ def find_deals(database, threshold):
 
 def format_riven_stats(stats):
     """Format riven stats with correct signs."""
-
     positives = [s for s in stats[:-1] if s]
     negative = stats[-1]
 
@@ -125,7 +122,6 @@ def format_riven_stats(stats):
 
 def send_alert(deal):
     """Send alert for a good deal."""
-
     weapon = deal["weapon"].replace("_", " ").title()
     stats = format_riven_stats(deal["stats"])
     dt = datetime.datetime.fromisoformat(deal["scraped_at"])
@@ -149,7 +145,6 @@ def send_alert(deal):
 
 def send_discord_webhook(message):
     """Send alert to Discord webhook."""
-
     import os
 
     webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
@@ -168,7 +163,6 @@ def send_discord_webhook(message):
 
 def monitor(database=DATABASE, threshold=DEAL_THRESHOLD):
     """Monitor and alert on deals."""
-
     init_alerted_table(database)
 
     logging.info(f"Starting monitor with threshold={threshold}")

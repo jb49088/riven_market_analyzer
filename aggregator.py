@@ -17,7 +17,6 @@ logging.basicConfig(
 
 def init_database(database):
     """Setup the database with a godrolls table."""
-
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
 
@@ -43,7 +42,6 @@ def init_database(database):
 
 def normalize_riven_stats(stat1, stat2, stat3, stat4):
     """Normalize riven stats by sorting positives."""
-
     positives = [s for s in [stat1, stat2, stat3] if s]
     positives.sort()
     while len(positives) < 3:
@@ -53,7 +51,6 @@ def normalize_riven_stats(stat1, stat2, stat3, stat4):
 
 def build_profiles_from_listings(cursor):
     """Build price lists for each unique riven profile"""
-
     profiles = defaultdict(list)
     for row in cursor.fetchall():
         weapon, stat1, stat2, stat3, stat4, price = row
@@ -86,7 +83,6 @@ def group_by_weapon(aggregated):
 
 def calculate_percentiles(weapon_rolls):
     """Calculate sample count percentiles for weapon rolls."""
-
     sample_counts = [p[6] for p in weapon_rolls]  # p[6] is sample_count
     sorted_counts = sorted(sample_counts)
 
@@ -117,7 +113,6 @@ def display_stats(cursor):
 
 def aggregator():
     """Aggregate listings into godrolls table."""
-
     conn, cursor = init_database(DATABASE)
 
     cursor.execute(

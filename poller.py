@@ -19,7 +19,6 @@ logging.basicConfig(
 
 def init_database(database):
     """Setup the database with a listings table."""
-
     db_path = database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -81,7 +80,6 @@ def get_riven_market_params():
 
 def fetch_riven_market_page(url, params, headers):
     """Fetch and parse a page."""
-
     # Update time for cache busting
     params["time"] = int(datetime.datetime.now().timestamp() * 1000)
 
@@ -92,7 +90,6 @@ def fetch_riven_market_page(url, params, headers):
 
 def parse_riven_market_rivens(soup):
     """Parse all rivens on a page."""
-
     rivens = []
 
     for element in soup.select("div.riven"):
@@ -123,7 +120,6 @@ def parse_riven_market_rivens(soup):
 
 def poll_riven_market():
     """Poll first page of riven.market and return normalized data."""
-
     url = get_riven_market_url()
     params = get_riven_market_params()
     headers = get_headers()
@@ -172,7 +168,6 @@ def get_warframe_market_params():
 
 def fetch_warframe_market_auctions():
     """Fetch raw auction data from warframe.market API."""
-
     url = get_warframe_market_url()
     params = get_warframe_market_params()
     headers = get_headers()
@@ -186,7 +181,6 @@ def fetch_warframe_market_auctions():
 
 def poll_warframe_market():
     """Poll recent riven listings from warframe.market API and return normalized data."""
-
     auctions = fetch_warframe_market_auctions()
     rivens = parse_warframe_market_rivens(auctions)
 
@@ -195,7 +189,6 @@ def poll_warframe_market():
 
 def parse_warframe_market_rivens(auctions):
     """Parse and normalize warframe.market auctions."""
-
     rivens = []
 
     for auction in auctions:
@@ -236,7 +229,6 @@ def parse_warframe_market_rivens(auctions):
 
 def poller():
     """Poll both sites and append only new listings to the listings table."""
-
     db_path, conn, cursor = init_database(DATABASE)
 
     # Get existing IDs for quick lookup

@@ -22,7 +22,7 @@ logging.basicConfig(
 
 
 def check_connection():
-    """Quick connection check before starting."""
+    """Internet connection check."""
     try:
         socket.create_connection(("8.8.8.8", 53), timeout=3)
         return True
@@ -52,6 +52,7 @@ def should_aggregate():
 
 
 def riven_sniper():
+    """Main entry point for riven_sniper"""
     if not check_connection():
         return
 
