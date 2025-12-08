@@ -2,6 +2,7 @@
 # =                                 RIVEN_SNIPER                                 =
 # ================================================================================
 
+import datetime
 import logging
 
 from aggregator import aggregator
@@ -18,11 +19,20 @@ logging.basicConfig(
 )
 
 
+def should_aggregate():
+    """Check if it's 4am."""
+    now = datetime.datetime.now()
+    return now.hour == 4 and now.minute == 0
+
+
 def riven_sniper():
     logging.info("Starting riven_sniper pipeline...")
 
     poller()
-    aggregator()
+
+    if should_aggregate():
+        aggregator()
+
     monitor()
 
     logging.info("Pipleline complete")
