@@ -40,6 +40,16 @@ def init_database(database):
         """
     )
 
+    # Create index for fast lookups
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_listings_lookup
+        ON listings(weapon, stat1, stat2, stat3, stat4, price)
+        """
+    )
+
+    conn.commit()
+
     return db_path, conn, cursor
 
 
