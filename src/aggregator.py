@@ -31,24 +31,14 @@ def init_database(database):
     return conn, cursor
 
 
-def normalize_riven_stats(stat1, stat2, stat3, stat4):
-    """Normalize riven stats by sorting positives."""
-    positives = [s for s in [stat1, stat2, stat3] if s]
-    positives.sort()
-    while len(positives) < 3:
-        positives.append("")
-    return tuple(positives + [stat4])
-
-
 def build_profiles_from_listings(cursor):
     """Build price lists for each unique riven profile"""
     profiles = defaultdict(list)
     for row in cursor.fetchall():
         weapon, stat1, stat2, stat3, stat4, price = row
 
-        normalized = normalize_riven_stats(stat1, stat2, stat3, stat4)
-
-        key = (weapon, *normalized)
+        # Stats are already normalized in the listings table
+        key = (weapon, stat1, stat2, stat3, stat4)
         profiles[key].append(price)
 
     return profiles
@@ -102,7 +92,7 @@ def display_stats(cursor):
     logging.info(f"Godrolls created: {total} top rolls across {weapons} weapons")
 
 
-def aggregate():
+def aggregator():
     """Aggregate listings into godrolls table."""
     conn, cursor = init_database(DATABASE)
 
@@ -143,6 +133,6 @@ def aggregate():
 
 if __name__ == "__main__":
     try:
-        aggregate()
+        aggregator()
     except KeyboardInterrupt:
         print("Aggregator interrupted")
