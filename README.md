@@ -1,6 +1,6 @@
 # riven_sniper
 
-An automated [Warframe](https://www.warframe.com/) [riven mod](https://warframe.fandom.com/wiki/Riven_Mods) deal finder. Continuously scrapes [riven.market](https://riven.market/) and [warframe.market](https://warframe.market/), identifies top-tier stats combinations (godrolls) from historical pricing data, and sends instant [Discord](https://discord.com/) alerts when underpriced rivens appear. Runs on a [Raspberry Pi](https://www.raspberrypi.com/) with minutely polling to catch good deals before they're gone.
+An automated [Warframe](https://www.warframe.com/) [riven mod](https://warframe.fandom.com/wiki/Riven_Mods) deal finder. Continuously scrapes [riven.market](https://riven.market/) and [warframe.market](https://warframe.market/), identifies top-tier stats combinations (godrolls) from historical pricing data, and sends instant [Pushover](https://pushover.net/) alerts when underpriced rivens appear. Runs on a [Raspberry Pi](https://www.raspberrypi.com/) with minutely polling to catch good deals before they're gone.
 
 <!-- CODE_STATISTICS_START -->
 
@@ -10,10 +10,10 @@ An automated [Warframe](https://www.warframe.com/) [riven mod](https://warframe.
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                           6            181            120            504
-Markdown                         1              8              4             29
+Python                           6            181            120            515
+Markdown                         1             10              4             29
 -------------------------------------------------------------------------------
-SUM:                             7            189            124            533
+SUM:                             7            191            124            544
 -------------------------------------------------------------------------------
 ```
 <!-- CODE_STATISTICS_END -->
@@ -28,14 +28,15 @@ riven_sniper
 │   └── market.db
 ├── logs
 ├── README.md
-└── src
-    ├── aggregator.py
-    ├── config.py
-    ├── monitor.py
-    ├── poller.py
-    ├── riven_sniper.py
-    └── scraper.py
+├── src
+│   ├── aggregator.py
+│   ├── config.py
+│   ├── monitor.py
+│   ├── poller.py
+│   ├── riven_sniper.py
+│   └── scraper.py
+└── your_database.db
 
-4 directories, 8 files
+4 directories, 9 files
 ```
 <!-- PROJECT_STRUCTURE_END -->

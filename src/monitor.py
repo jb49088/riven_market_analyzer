@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 import sqlite3
 import time
 
@@ -132,25 +133,35 @@ def send_alert(deal):
     """.strip()
 
     logging.info(f"DEAL FOUND:\n{message}\n")
-    send_discord_webhook(message)
+    push_notification(message)
 
 
-def send_discord_webhook(message):
-    """Send alert to Discord webhook."""
-    import os
+def push_notification(message):
+    """Push notification to Pushover."""
+    application_key = os.getenv("PUSHOVER_APPLICATION_KEY")
+    user_key = os.getenv("PUSHOVER_USER_KEY")
 
-    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    if not user_key:
+        print("PUSHOVER_USER_KEY not set")
+        return
 
-    if not webhook_url:
-        logging.warning("DISCORD_WEBHOOK_URL not set")
+    if not user_key:
+        print("PUSHOVER_APPLICATION_KEY not set")
         return
 
     try:
-        response = requests.post(webhook_url, json={"content": message}, timeout=10)
+        response = requests.post(
+            "https://api.pushover.net/1/messages.json",
+            data={
+                "token": application_key,
+                "user": user_key,
+                "message": message,
+            },
+        )
         response.raise_for_status()
-        logging.info("Discord alert sent successfully")
+        print("Pushover notification sent successfully")
     except Exception as e:
-        logging.error(f"Failed to send Discord alert: {e}")
+        print(f"Failed to send Pushover notification: {e}")
 
 
 def monitor(database=DATABASE, threshold=DEAL_THRESHOLD):
@@ -162,7 +173,7 @@ def monitor(database=DATABASE, threshold=DEAL_THRESHOLD):
 
     for deal in deals:
         send_alert(deal)
-        time.sleep(2)
+        time.sleep(1)
 
     logging.info(f"Monitor complete. Found {len(deals)} deals")
     return len(deals)
