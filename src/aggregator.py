@@ -10,7 +10,6 @@ def init_database(database):
     """Setup the database with a godrolls table."""
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
-
     cursor.execute("DROP TABLE IF EXISTS godrolls")
     cursor.execute(
         """
@@ -27,7 +26,6 @@ def init_database(database):
         )
         """
     )
-
     return conn, cursor
 
 
@@ -36,11 +34,9 @@ def build_profiles_from_listings(cursor):
     profiles = defaultdict(list)
     for row in cursor.fetchall():
         weapon, stat1, stat2, stat3, stat4, price = row
-
         # Stats are already normalized in the listings table
         key = (weapon, stat1, stat2, stat3, stat4)
         profiles[key].append(price)
-
     return profiles
 
 
@@ -58,7 +54,6 @@ def group_by_weapon(aggregated):
     for profile in aggregated:
         weapon = profile[0]
         weapon_profiles[weapon].append(profile)
-
     return weapon_profiles
 
 
@@ -66,14 +61,12 @@ def calculate_percentiles(weapon_rolls):
     """Calculate sample count percentiles for weapon rolls."""
     sample_counts = [p[6] for p in weapon_rolls]  # p[6] is sample_count
     sorted_counts = sorted(sample_counts)
-
     profiles_with_percentiles = []
     for profile in weapon_rolls:
         sample_count = profile[6]
         rank = sorted_counts.index(sample_count)
         percentile = (rank / len(sample_counts)) * 100
         profiles_with_percentiles.append(profile + (percentile,))
-
     return profiles_with_percentiles
 
 
@@ -88,7 +81,6 @@ def display_stats(cursor):
     total = cursor.fetchone()[0]
     cursor.execute("SELECT COUNT(DISTINCT weapon) FROM godrolls")
     weapons = cursor.fetchone()[0]
-
     logging.info(f"Godrolls created: {total} top rolls across {weapons} weapons")
 
 
@@ -96,11 +88,13 @@ def aggregate():
     """Aggregate listings into godrolls table."""
     conn, cursor = init_database(DATABASE)
 
+    # Deduplicate by keeping the lowest price for each
     cursor.execute(
         """
-        SELECT weapon, stat1, stat2, stat3, stat4, price
+        SELECT weapon, stat1, stat2, stat3, stat4, MIN(price) as price
         FROM listings
         WHERE price > 0 AND price < ?
+        GROUP BY seller, weapon, stat1, stat2, stat3, stat4
         """,
         (MAX_PRICE,),
     )
@@ -125,9 +119,7 @@ def aggregate():
     )
 
     conn.commit()
-
     display_stats(cursor)
-
     conn.close()
 
 
