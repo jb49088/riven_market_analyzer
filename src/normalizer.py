@@ -134,7 +134,7 @@ def sort_positive_stats(stat1, stat2, stat3, stat4):
     return tuple(positives + [stat4])
 
 
-def process_listing_stats(stat1, stat2, stat3, stat4, source):
+def normalize(stat1, stat2, stat3, stat4, source):
     # Normalize stat names
     normalized = normalize_riven_stats(stat1, stat2, stat3, stat4, source)
     if normalized is None:
