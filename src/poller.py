@@ -107,7 +107,7 @@ def parse_riven_market_rivens(soup):
             "id": f"rm_{element['id']}",
             "seller": seller_name,
             "source": "riven.market",
-            "weapon": element["data-weapon"].lower().replace(" ", "_"),
+            "weapon": element["data-weapon"],
             "stat1": element["data-stat1"],
             "stat2": element["data-stat2"],
             "stat3": element["data-stat3"],
@@ -134,8 +134,9 @@ def poll_riven_market():
 
 def insert_listing(listing, existing_ids, cursor):
     if listing["id"] not in existing_ids:
-        # Normalize stats using the source-specific mapping
+        # Normalize weapon name and stats using source-specific mapping
         normalized = normalize(
+            listing["weapon"],
             listing["stat1"],
             listing["stat2"],
             listing["stat3"],
@@ -146,11 +147,11 @@ def insert_listing(listing, existing_ids, cursor):
         # Skip if normalization failed (invalid/unmapped stats)
         if normalized is None:
             logging.warning(
-                f"Skipping listing {listing['id']} - unmapped stats: {listing['stat1']}, {listing['stat2']}, {listing['stat3']}, {listing['stat4']}"
+                f"Skipping listing {listing['id']} ({listing['weapon']}) - unmapped stats: {listing['stat1']}, {listing['stat2']}, {listing['stat3']}, {listing['stat4']}"
             )
             return
 
-        stat1, stat2, stat3, stat4 = normalized
+        weapon, stat1, stat2, stat3, stat4 = normalized
 
         cursor.execute(
             """
@@ -161,7 +162,7 @@ def insert_listing(listing, existing_ids, cursor):
                 listing["id"],
                 listing["seller"],
                 listing["source"],
-                listing["weapon"],
+                weapon,
                 stat1,
                 stat2,
                 stat3,

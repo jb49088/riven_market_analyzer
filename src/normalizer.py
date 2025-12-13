@@ -102,6 +102,12 @@ WARFRAME_MARKET_TO_CANONICAL = {
 }
 
 
+def normalize_weapon_name(weapon):
+    if not weapon:
+        return ""
+    return weapon.lower().replace(" ", "_").replace("-", "_")
+
+
 def normalize_stat_name(stat, source):
     if source == "riven.market":
         return RIVEN_MARKET_TO_CANONICAL.get(stat)
@@ -134,11 +140,14 @@ def sort_positive_stats(stat1, stat2, stat3, stat4):
     return tuple(positives + [stat4])
 
 
-def normalize(stat1, stat2, stat3, stat4, source):
+def normalize(weapon, stat1, stat2, stat3, stat4, source):
+    # Normalize weapon name
+    normalized_name = normalize_weapon_name(weapon)
+
     # Normalize stat names
-    normalized = normalize_riven_stats(stat1, stat2, stat3, stat4, source)
-    if normalized is None:
+    normalized_stats = normalize_riven_stats(stat1, stat2, stat3, stat4, source)
+    if normalized_stats is None:
         return None
 
     # Sort positive stats
-    return sort_positive_stats(*normalized)
+    return (normalized_name, *sort_positive_stats(*normalized_stats))

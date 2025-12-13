@@ -40,27 +40,27 @@ def insert_batch(cursor, conn, rivens):
     skipped_count = 0
 
     for r in rivens:
-        # Normalize stats using the source-specific mapping
+        # Normalize weapon name and stats using source-specific mapping
         normalized = normalize(
-            r["stat1"], r["stat2"], r["stat3"], r["stat4"], r["source"]
+            r["weapon"], r["stat1"], r["stat2"], r["stat3"], r["stat4"], r["source"]
         )
 
         # Skip if normalization failed (invalid/unmapped stats)
         if normalized is None:
             skipped_count += 1
             logging.warning(
-                f"Skipping listing {r['id']} - unmapped stats: {r['stat1']}, {r['stat2']}, {r['stat3']}, {r['stat4']}"
+                f"Skipping listing {r['id']} ({r['weapon']})- unmapped stats: {r['stat1']}, {r['stat2']}, {r['stat3']}, {r['stat4']}"
             )
             continue
 
-        stat1, stat2, stat3, stat4 = normalized
+        weapon, stat1, stat2, stat3, stat4 = normalized
 
         normalized_rivens.append(
             (
                 r["id"],
                 r["seller"],
                 r["source"],
-                r["weapon"],
+                weapon,
                 stat1,
                 stat2,
                 stat3,
